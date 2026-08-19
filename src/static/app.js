@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -50,10 +51,46 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+<<<<<<< HEAD
           ${participantsList}
+=======
+          <div class="participants">
+            <strong>Participants:</strong>
+            <ul>
+              ${details.participants.map((participant) => `
+                <li>
+                  <span>${participant}</span>
+                  <button class="delete-participant" type="button" aria-label="Unregister ${participant}" data-activity="${name}" data-participant="${participant}">&#128465;</button>
+                </li>
+              `).join("")}
+            </ul>
+          </div>
+>>>>>>> 6bb5a06 (Implement participant unregistration feature and add tests)
         `;
 
         activitiesList.appendChild(activityCard);
+
+        activityCard.querySelectorAll(".delete-participant").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const activity = button.dataset.activity;
+            const participant = button.dataset.participant;
+
+            try {
+              const response = await fetch(
+                `/activities/${encodeURIComponent(activity)}/participants/${encodeURIComponent(participant)}`,
+                { method: "DELETE" }
+              );
+
+              if (!response.ok) {
+                throw new Error("Failed to unregister participant");
+              }
+
+              fetchActivities();
+            } catch (error) {
+              console.error("Error unregistering participant:", error);
+            }
+          });
+        });
 
         // Add option to select dropdown
         const option = document.createElement("option");
@@ -116,7 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+<<<<<<< HEAD
         // Refresh the activities list to show updated participants
+=======
+>>>>>>> 6bb5a06 (Implement participant unregistration feature and add tests)
         fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
